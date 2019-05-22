@@ -9,74 +9,77 @@ let inputString = '';
 let currentLine = 0;
 
 process.stdin.on('data', inputStdin => {
-  inputString += inputStdin;
+    inputString += inputStdin;
 });
 
 process.stdin.on('end', _ => {
-  inputString = inputString.replace(/\s*$/, '')
-    .split('\n')
-    .map(str => str.replace(/\s*$/, ''));
+    inputString = inputString.replace(/\s*$/, '')
+        .split('\n')
+        .map(str => str.replace(/\s*$/, ''));
 
-  main();
+    main();
 });
 
 function readLine() {
-  return inputString[currentLine++];
+    return inputString[currentLine++];
 }
 
+function update(diff_array, [a, b, k]) {
+    diff_array[a - 1] += k;
+    diff_array[b] -= k;
+}
+function get_max(array, diff_array) {
+    let result = array;
+    let max = 0;
+    let foo = array.map((value, index) => {
+        if (index === 0) {
+            result[index] = diff_array[0]
+            return diff_array[0]
+        }
+        result[index] = diff_array[index] + result[index - 1]
+        return result[index]
+    })
+    console.log(foo);
+    foo.forEach((value, index) => {
+      if (value > max) {
+          max = value;
+      }
+  })
+    return max;
+}
 // Complete the arrayManipulation function below.
 function arrayManipulation(n, queries) {
-  let x = new Array(n).fill(0);
-  let max = 0;
-  queries.forEach((abk, index_query) => {
-    let [a, b, k] = abk;
-    a -= 1
-    x.slice(a,b)
-      .map((value => value += k))
-      .forEach((value,index) => {
-        x[a+index] = value;
-        if (value > max) {
-          max = value;
-          console.log(max, index_query);
-        }
-      })
-  })
-  return max;
+    let array = new Array(n).fill(0);
+    let diff_array = new Array(n + 1).fill(0);
+    queries.forEach((query, index) => {
+        update(diff_array, query)
+    })
+    return get_max(array, diff_array);
 }
-
-
-// let queries = [
-// [2,6,8],
-// [3,5,7],
-// [1,8,1],
-// [5,9,15],
-// ]
-
-// queries = "1 2 100\n\
-// 2 5 100\n\
-// 3 4 100".split('\n').map(value => value.split(' ').map(queriesTemp => parseInt(queriesTemp, 10)));
-// arrayManipulation(10, queries)
-
-
+// const queries = [[1,2,100],[2,5,100],[3,4,100]];
+const queries = [[2,3,603],
+[1,1,286],
+[4,4,882]];
+arrayManipulation(4, queries);
 
 function main() {
-  const ws = fs.createWriteStream("./out.txt");
+    const ws = fs.createWriteStream("out.txt");
 
-  const nm = readLine().split(' ');
+    const nm = readLine().split(' ');
 
-  const n = parseInt(nm[0], 10);
+    const n = parseInt(nm[0], 10);
 
-  const m = parseInt(nm[1], 10);
+    const m = parseInt(nm[1], 10);
 
-  let queries = Array(m);
+    let queries = Array(m);
 
-  for (let i = 0; i < m; i++) {
-    queries[i] = readLine().split(' ').map(queriesTemp => parseInt(queriesTemp, 10));
-  }
+    for (let i = 0; i < m; i++) {
+        queries[i] = readLine().split(' ').map(queriesTemp => parseInt(queriesTemp, 10));
+    }
 
-  let result = arrayManipulation(n, queries);
+    let result = arrayManipulation(n, queries);
 
-  ws.write(result + "\n");
+    ws.write(result + "\n");
 
-  ws.end();
+    ws.end();
 }
