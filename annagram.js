@@ -32,38 +32,49 @@ function breakup_n(s, n) {
   return result;
 }
 
-function intersection(a, b) {
-  return new Set([...a].filter(x => b.has(x)));
-}
 
 function build_key_count_map(array) {
   return array.reduce((acc, value) => {
-    if (acc[value] !== undefined) {
-      acc[value] += 1
+    const sorted_value = value.split("").sort().join("");
+    if (acc[sorted_value] !== undefined) {
+      acc[sorted_value] += 1
     }
     else {
-      acc[value] = 1
+      acc[sorted_value] = 1
     }
     return acc;
   }, {})
 }
 
-sherlockAndAnagrams("ifailuhkqq")
+let f = [];
+function factorial (n) {
+  if (n == 0 || n == 1)
+    return 1;
+  if (f[n] > 0)
+    return f[n];
+  return f[n] = factorial(n-1) * n;
+} 
+
+function choose(n, r){
+  return factorial(n) / ( factorial(r) * factorial(n - r));
+}
+
+console.log(sherlockAndAnagrams("abba"))
 // Complete the sherlockAndAnagrams function below.
 function sherlockAndAnagrams(s) {
-  
+  let result = 0;
 
   for(let i = 1; i<s.length; i++){
-    const z = s.split("").reverse().join("");
-
     const s_x = breakup_n(s, i)
-    const z_x = breakup_n(z, i)
-  
     const s_y = build_key_count_map(s_x);
-    const z_y = build_key_count_map(z_x);
-    console.log(z_y);
+    result += Object.entries(s_y).reduce((acc, [key, value]) => {
+      if(value>1)
+        acc += choose(value, 2);
+      return acc;
+    }, 0)
+    
   }
-
+  return result;
 }
 
 
