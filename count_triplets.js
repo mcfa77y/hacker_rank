@@ -26,52 +26,53 @@ function readLine() {
 function build_key_count_map(array) {
   return array.reduce((acc, value, index) => {
     if (acc[value] === undefined) {
-      acc[value] = []
+      acc[value] = new Set();
     }
-    acc[value].push(index)
+    acc[value].add(index)
     return acc;
   }, {})
 }
 function get_triplets(base, value) {
-  if (base !== 1 && base !== 0){
-    const n = Math.floor(Math.log(value)/Math.log(base));
+  if (base !== 1 && base !== 0) {
+    const n = Math.floor(Math.log(value) / Math.log(base));
     return [base ** n, base ** (n + 1), base ** (n + 2)]
   }
-  else if (base == 1){
+  else if (base == 1) {
     return [value, value, value];
   }
 }
 
 let f = [];
 
-function factorial_helper (n) {
+function factorial_helper(n) {
   if (n == 0 || n == 1)
     return 1;
   if (f[n] > 0)
     return f[n];
-  return f[n] = factorial_helper(n-1) * n;
-} 
+  return f[n] = factorial_helper(n - 1) * n;
+}
 
-function factorial (n) {
+function factorial(n) {
   let result = 1;
   if (f[n] > 0)
     return f[n];
-  for (let i = 2; i <= n; i+=1){
+  for (let i = 2; i <= n; i += 1) {
     result = factorial_helper(i)
-    console.log('factorial n, result', i,result);
+    console.log('factorial n, result', i, result);
   }
   return result;
 }
+
 // a3, b10
-function factorial_2(a,b){
+function factorial_2(a, b) {
   let result = 1;
-  for (let i = (b-a+1); i<=b; i+=1){
+  for (let i = (b - a + 1); i <= b; i += 1) {
     result *= i;
   }
   return result;
 }
-function choose(n, r){
-  return Math.floor(factorial_2(r,n)/factorial(r));
+function choose(n, r) {
+  return Math.floor(factorial_2(r, n) / factorial(r));
   // return Math.floor(factorial(n) / ( factorial(r) * factorial(n - r)));
 }
 
@@ -80,35 +81,67 @@ function countTriplets(arr, r) {
   let result = 0;
   if (r === 1) {
     result = choose(arr.length, 3);
-    console.log('r === 1:',result);
+    console.log('r === 1:', result);
     return result;
   }
-  const count_map = build_key_count_map(arr.filter((value) => parseInt(value, 10) % r === 0));
+  const filtered_array = arr.filter((value) => parseInt(value, 10) % r === 0 || parseInt(value, 10) === 1)
+    .map(value => parseInt(value, 10));
+  const count_map = build_key_count_map(filtered_array);
   // const unique_arr = Object.keys(count_map).map(x => parseInt(x, 10));
   // console.log(JSON.stringify(count_map, null, 2));
-  
-  arr.map(value=>parseInt(value, 10))
-    .filter((value) => value % r === 0)
+
+  filtered_array
     .reduce((acc, value, index) => {
-    const triples = get_triplets(r, value);
-    // console.log("triples", triples);
-    const has_all_triplets = triples.every((value) => count_map[value] != undefined);
-    
-    // console.log(triples);
-    // console.log(JSON.stringify(count_map, null, 2));
-    if (has_all_triplets) {
-      result += triples.slice(1).reduce((acc, value, index) => {
-        acc *= count_map[value].filter((available_index) => available_index > index).length;
-        // count_map[value].filter((available_index) => available_index > index)
-        return acc;
-      }, 1)
-      // console.log(result);
-    }
-  }, 0)
+      const triples = get_triplets(r, value);
+      // console.log("triples", triples);
+      const has_all_triplets = triples.every((value) => count_map[value] != undefined);
+
+      // console.log(triples);
+      // console.log(JSON.stringify(count_map, null, 2));
+      if (has_all_triplets) {
+        // result += triples.slice(1).reduce((acc, value, index) => {
+        //   acc *= count_map[value].filter((available_index) => available_index > index).length;
+        //   // count_map[value].filter((available_index) => available_index > index)
+        //   return acc;
+        // }, 1)
+        result += triples.slice(1).reduce((acc, value, index) => {
+          acc *= count_map[value].size
+          return acc;
+        }, 1)
+        count_map[value].delete(index);
+        // console.log(result);
+      }
+    }, 0)
   console.log(result);
   return result;
 }
 
+/*
+private static long countTriplets(List<Long> arr, long r) {
+		Map<Long, Long> potential = new HashMap<>();
+		Map<Long, Long> counter = new HashMap<>();
+		long count = 0;
+		for (int i = 0; i < arr.size(); i++) {
+			long a = arr.get(i);
+			long key = a / r;
+			
+			if (counter.containsKey(key) && a % r == 0) {
+				count += counter.get(key);
+			}
+			
+			if (potential.containsKey(key) && a % r == 0) {
+				long c = potential.get(key);
+				counter.put(a, counter.getOrDefault(a, 0L) + c);
+			}
+			
+			potential.put(a, potential.getOrDefault(a, 0L) + 1); // Every number can be the start of a triplet.
+		}
+		return count;
+	}
+*/
+
+
+// countTriplets("1 2 2 4".split(' '), 2);
 // countTriplets("1 3 9 9 27 81".split(' '), 3);
 // countTriplets("1 2 1 2 4".split(' '), 2);
 // countTriplets("1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1".split(' '), 1);
