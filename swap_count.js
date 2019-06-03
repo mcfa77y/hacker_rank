@@ -35,13 +35,13 @@ function countSwaps(a) {
     swapped = false;
     for (let i = 1; i < size; i++) {
       if (a[i - 1] > a[i]) {
-        swap(a, i - 1, i)
+        swap(a, i - 1, i);
         swapped = true;
         swap_count += 1;
         console.log(a);
       }
     }
-    console.log("////")
+    console.log('////');
     size -= 1;
   }
   console.log(`Array is sorted in ${swap_count} swaps.`);
