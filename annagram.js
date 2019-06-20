@@ -35,15 +35,15 @@ function breakup_n(s, n) {
 
 function build_key_count_map(array) {
   return array.reduce((acc, value) => {
-    const sorted_value = value.split("").sort().join("");
+    const sorted_value = value.split('').sort().join('');
     if (acc[sorted_value] !== undefined) {
-      acc[sorted_value] += 1
+      acc[sorted_value] += 1;
     }
     else {
-      acc[sorted_value] = 1
+      acc[sorted_value] = 1;
     }
     return acc;
-  }, {})
+  }, {});
 }
 
 let f = [];
@@ -59,19 +59,19 @@ function choose(n, r){
   return factorial(n) / ( factorial(r) * factorial(n - r));
 }
 
-console.log(sherlockAndAnagrams("abba"))
+console.log(sherlockAndAnagrams('abba'));
 // Complete the sherlockAndAnagrams function below.
 function sherlockAndAnagrams(s) {
   let result = 0;
 
   for(let i = 1; i<s.length; i++){
-    const s_x = breakup_n(s, i)
+    const s_x = breakup_n(s, i);
     const s_y = build_key_count_map(s_x);
     result += Object.entries(s_y).reduce((acc, [key, value]) => {
       if(value>1)
         acc += choose(value, 2);
       return acc;
-    }, 0)
+    }, 0);
     
   }
   return result;
@@ -89,7 +89,7 @@ function main() {
 
     let result = sherlockAndAnagrams(s);
 
-    ws.write(result + "\n");
+    ws.write(result + '\n');
   }
 
   ws.end();
