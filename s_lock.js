@@ -34,7 +34,7 @@ function isValid(s) {
       return 'YES';
     }
     else if ((first - 1 == 0 || second - 1 == 0) && (Math.abs(freq_key_count[0] - freq_key_count[1]) == 1)){
-      return "YES";
+      return 'YES';
     }
     else{ return 'NO';
     }
