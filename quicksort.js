@@ -11,25 +11,25 @@ function quicksort(arr, lo, hi, id) {
   }
 }
 
-function partition(array, lo, hi) {
-  console.log('\t' + array.slice(lo, (hi - lo)), '\n\t', lo, hi);
+function partition(array, lo_index, hi_index) {
+  console.log('partitioning\n\tx' + array.slice(lo_index, (hi_index - lo_index)), 'x\n\t', lo_index, hi_index);
   // const pivot = array[Math.floor((hi + lo) / 2)];
-  const pivot_value = array[hi];
+  const pivot_value = array[hi_index];
   console.log('\tpivot value', pivot_value);
-  while (lo <= hi) {
-    while (array[lo] < pivot_value) {
-      lo += 1;
+  while (lo_index <= hi_index) {
+    while (array[lo_index] < pivot_value) {
+      lo_index += 1;
     }
-    while (array[hi] > pivot_value) {
-      hi -= 1;
+    while (array[hi_index] > pivot_value) {
+      hi_index -= 1;
     }
-    if (lo <= hi) {
-      swap(array, lo, hi);
-      lo += 1;
-      hi -= 1;
+    if (lo_index <= hi_index) {
+      swap(array, lo_index, hi_index);
+      lo_index += 1;
+      hi_index -= 1;
     }
   }
-  return lo;
+  return lo_index;
 }
 
 function swap(arr, a, b) {
@@ -44,7 +44,8 @@ function swap(arr, a, b) {
 
 
 // let arr = [9, 2, 6, 4, 3, 5, 1];
-let arr = [1,2,4,5,3];
-partition(arr, 0, arr.length - 1);
+// let arr = [1,2,4,5,3];
+let arr = [10, 80, 30, 90, 40, 50, 70];
+// partition(arr, 0, arr.length - 1);
 // let arr = [10, 80, 30, 90, 40, 50, 70];
-// quicksort(arr, 0, arr.length - 1, 1);
+quicksort(arr, 0, arr.length - 1, 1);
