@@ -1,3 +1,6 @@
+// import Utils from '../Utils';
+const { create_buff, flip_coin } = require('../Utils');
+
 class Tree {
   constructor(data) {
     if (data > 1) {
@@ -23,22 +26,49 @@ class Tree {
     if (right_data != undefined)
       this.right = new Tree(right_data);
   }
-  _create_buff(size) {
-    let buff = '';
-    let tmp_size = size;
-    while (tmp_size > 0) {
-      buff += '\t';
-      tmp_size -= 1;
-    }
-    return buff;
-  }
+
   _printBFS(startNode, level) {
     if (startNode === undefined || startNode === null) {
       return;
     }
     this._printBFS(startNode.right, level + 1);
-    console.log(this._create_buff(level) + startNode.data + ' ' + startNode.is_leaf());
+    console.log(create_buff(level) + startNode.data + ' ' + startNode.is_leaf());
     this._printBFS(startNode.left, level + 1);
+  }
+
+
+  build_balance_tree(levels, result = new Tree(1)) {
+
+    if (levels === 0) {
+      return result;
+    }
+    const new_levels = levels - 1;
+    let { data } = result;
+    let left = new Tree(data * 2);
+    result.left = this.build_balance_tree(new_levels, left);
+    let right = new Tree(data * 2 + 1);
+    result.right = this.build_balance_tree(new_levels, right);
+    return result;
+
+  }
+
+  build_random_tree(levels, result = new Tree(1)) {
+
+    if (levels === 0) {
+      return result;
+    }
+    const new_levels = levels - 1;
+    let value = 0;
+    if (flip_coin()) {
+      value = flip_coin() ? 0 : 1;
+      result.left = this.build_random_tree(new_levels, new Tree(value));
+    }
+    if (flip_coin()) {
+      value = flip_coin() ? 0 : 1;
+      result.right = this.build_random_tree(new_levels, new Tree(value));
+    }
+    return result;
+
   }
 
 
