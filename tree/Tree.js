@@ -7,9 +7,7 @@ class Tree {
     this.left = undefined;
     this.right = undefined;
   }
-  is_empty() {
-    return this === undefined;
-  }
+  
   is_leaf() {
     const { data, left, right } = this;
     return data !== undefined && left === undefined && right == undefined;
