@@ -14,6 +14,13 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
+      "program": "${workspaceFolder}/castle_on_the_grid.js",
+      "console": "integratedTerminal"
+    }
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
       "preLaunchTask": "tsc",
       "program": "${workspaceFolder}/out/graph-driver.js",
       "outFiles": [
