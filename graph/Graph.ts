@@ -1,67 +1,69 @@
 // const Utils = require('./Utils');
-import {create_buff} from '../Utils';
+import { create_buff } from '../Utils';
 
-interface GraphInterface{
+interface GraphInterface {
   data: number;
-  children: GraphInterface[];
+  neighbors: GraphInterface[];
   visited: boolean;
 }
 
-class Graph implements GraphInterface{
-  data: number;  
-  children: Graph[];
+class Graph implements GraphInterface {
+  data: number;
+  neighbors: Graph[];
   visited: boolean;
 
   constructor(data: number) {
     this.data = data;
-    this.children = [];
+    this.neighbors = [];
     this.visited = false;
   }
 
   is_leaf() {
-    const { data, children} = this;
-    return data !== undefined && children.length == 0;;
+    const { data, neighbors } = this;
+    return data !== undefined && neighbors.length == 0;;
   }
-  
-  get_child_by_value(data: number){
-    return this.children.filter((child) => child.data === data)[0];
+
+  get_neighbor_by_value(data: number) {
+    return this.neighbors.filter((neighbor) => neighbor.data === data)[0];
   }
-  add_child(g: Graph){
-    this.children.push(g);
+  add_neighbor(g: Graph) {
+    this.neighbors.push(g);
   }
-  create_children(data: number[]) {
+  create_neighbors(data: number[]) {
     const parent = this;
-    const children = data.map((datum) => {
+    const neighbors = data.map((datum) => {
       const g = new Graph(datum);;
-      g.add_child(parent);
+      g.add_neighbor(parent);
       return g;
     })
-    this.children = children;
+    this.neighbors = this.neighbors.concat(neighbors);
+    return this;
+  }
+  _not_visited(neighbor: Graph) {
+    return !neighbor.visited;
   }
   printBFS() {
-    this._printBFS(this, 0);
-  }
-  _printBFS(startNode, level){
-    if (startNode === undefined || startNode === null) {
-      return;
+    let level = 0;
+    console.log(create_buff(level) + this.data);
+    this.visited = true;
+    level += 1;
+    let next_neighbors: Graph[] = this.neighbors
+      .reduce((acc: Graph[], neighbor: Graph) => {
+        console.log(create_buff(level) + neighbor.data);
+        neighbor.visited = true;
+        return acc.concat(neighbor.neighbors);
+      }, [])
+    while (next_neighbors.length > 0){
+      level += 1;
+      next_neighbors = next_neighbors
+        .filter(this._not_visited)
+        .reduce((acc: Graph[], neighbor: Graph) => {
+          console.log(create_buff(level) + neighbor.data);
+          neighbor.visited = true;
+          return acc.concat(neighbor.neighbors);
+        }, [])
     }
-    if (!startNode.visited){
-      console.log(create_buff(level) + startNode.data );
-      startNode.visited = true;
-    }
-    let x = [];
-    startNode.children
-      .filter((child: Graph) => !child.visited)
-      .forEach((child) => {
-        console.log(create_buff(level) + child.data);
-        x.push(child);
-      })
-      x.filter((child: Graph) => !child.visited)
-      .forEach((child) => {
-        child.visited = true;
-        this._printBFS(child, level + 1);
-      
-    })
+    // this._printBFS(next_neighbors.filter(this._not_visited), level + 1);
   }
 
   printDFS() {
@@ -72,14 +74,14 @@ class Graph implements GraphInterface{
     if (startNode === undefined || startNode === null) {
       return;
     }
-    console.log(create_buff(level) + startNode.data));
+    console.log(create_buff(level) + startNode.data);
     startNode.visited = true;
-    startNode.children
-      .filter((child: Graph) => !child.visited)
-      .forEach((child) => {
-      this._printDFS(child, level + 1);
-      child.visited = true;
-    })
+    startNode.neighbors
+      .filter((neighbor: Graph) => !neighbor.visited)
+      .forEach((neighbor: Graph) => {
+        this._printDFS(neighbor, level + 1);
+        neighbor.visited = true;
+      })
   }
 
   build_balance_graph(levels, result = new Graph(1)) {
@@ -90,15 +92,15 @@ class Graph implements GraphInterface{
     const new_levels = levels - 1;
     let { data } = result;
     let left = new Graph(data * 2);
-    result.children.push(this.build_balance_graph(new_levels, left));
+    result.neighbors.push(this.build_balance_graph(new_levels, left));
     let right = new Graph(data * 2 + 1);
-    result.children.push(this.build_balance_graph(new_levels, right));
+    result.neighbors.push(this.build_balance_graph(new_levels, right));
     return result;
-  
+
   }
-  
+
   // build_random_graph(levels, result = new Graph(1)) {
-  
+
   //   if (levels === 0) {
   //     return result;
   //   }
@@ -113,7 +115,7 @@ class Graph implements GraphInterface{
   //     result.right = this.build_random_graph(new_levels, new Graph(value));
   //   }
   //   return result;
-  
+
   // }
 
 }
